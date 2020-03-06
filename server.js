@@ -1,6 +1,7 @@
-// Require Express & Mongoose
+// Require Express, Mongoose, ShortUrl
 const express = require('express')
 const mongoose = require('mongoose')
+const ShortUrl = require('./models/shortUrl')
 // Take variables from express and assign them to a variable called app
 const app = express()
 
@@ -11,6 +12,8 @@ mongoose.connect('mongodb://localhost:urlShortener', {
 
 // Set view engine
 app.set('view engine', 'ejs')
+// Set ShortUrl Setting
+app.use(express.urlencoded({ extended: false }))
 
 // // Routing
 app.get('/', (req,res) => {
@@ -19,7 +22,11 @@ app.get('/', (req,res) => {
 })
 
 // From form post
-app.post('/shortUrls', (req,res) => {
+app.post('/shortUrls', async (req,res) => {
+    // Call the fullUrl property in the body of the EJS file
+    await ShortUrl.create({ full: req.body.fullUrl })
+    
+    res.redirect('/')
 })
 
 // Listen on the environment or port 5000 
